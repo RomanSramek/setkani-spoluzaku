@@ -70,7 +70,6 @@
     }
     .inner{padding:28px;}
     .title{font-size: clamp(26px, 3.4vw, 40px); letter-spacing:.2px; margin:0 0 8px;}
-    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.35; font-size: clamp(14px, 1.6vw, 16px);}
 
     /* Welcome */
     .welcome{display:grid; gap:16px; align-items:center; padding:54px 28px; text-align:center;}
@@ -87,6 +86,13 @@
     }
     .badge span{position:relative; font-weight:800; font-size:22px; letter-spacing:.5px;}
     @keyframes spin{to{transform:rotate(360deg)}}
+
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      line-height:1.35;
+      font-size: clamp(14px, 1.6vw, 16px);
+    }
 
     .reveal{
       opacity:0; transform: translateY(18px) scale(.98); filter: blur(6px);
@@ -147,6 +153,13 @@
       letter-spacing:.2px;
       transition: transform .18s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
       user-select:none;
+
+      /* zarovnání textu na střed + hezké v jednom řádku */
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      min-width: 140px;
     }
     .btn:hover{
       transform: translateY(-2px);
@@ -186,20 +199,6 @@
       z-index:9999;
     }
     .toast.on{opacity:1; transform:translateX(-50%) translateY(-2px);}
-
-    /* QR panel */
-    .qrWrap{margin-top:12px; display:none;}
-    .qrWrap.show{display:block; animation: pop .35s ease;}
-    .qrBox{
-      margin-top:10px;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.18);
-      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
-    }
-    canvas{border-radius:14px; background:#fff;}
-    .small{font-size:12px; color: rgba(255,255,255,.62); line-height:1.35;}
 
     /* Confetti canvas */
     #confetti{
@@ -244,10 +243,8 @@
       <section id="main" class="screen">
         <div class="inner">
           <h1 class="title">Setkání spolužáků po 20 letech</h1>
-          <p class="subtitle" id="sub">
-            <b>23. 3. 2026 v 15:00</b> · <b>KD Pub</b><br/>
-            <span style="color: rgba(255,255,255,.62)">Mariánské nám. 2187, 688 01 Uherský Brod 1</span>
-          </p>
+
+          <!-- POD NADPISEM NIC (smazáno podle tvého přání) -->
 
           <div class="countline" id="grid" aria-label="Odpočet">
             <div class="pill"><div class="num" id="d">0</div><div class="lbl">dní</div></div>
@@ -256,36 +253,27 @@
             <div class="pill"><div class="num" id="s">00</div><div class="lbl">sek</div></div>
           </div>
 
+          <!-- Hlavní UI: jen jedno tlačítko -->
           <div class="actions">
-            <button class="btn primary" id="btnInfo">Kdy a kde</button>
-            <button class="btn" id="btnMore">Více</button>
+            <button class="btn primary" id="btnMore">Více</button>
           </div>
 
-          <div class="details" id="details">
-            <div><b>Kdy:</b> 23. 3. 2026 (pondělí) v 15:00</div>
-            <div><b>Kde:</b> KD Pub</div>
-            <div><b>Adresa:</b> Mariánské nám. 2187, 688 01 Uherský Brod 1</div>
-            <div class="small" style="margin-top:8px;">Tip: Tenhle odkaz pošli do WhatsApp skupiny a připni ho.</div>
-          </div>
-
+          <!-- Panel "Více" obsahuje VŠE včetně Kdy a kde -->
           <div class="details" id="morePanel">
-            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;">
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+              <button class="btn" id="btnInfo">Kdy a kde</button>
               <button class="btn" id="btnMap">Mapy (Google)</button>
               <button class="btn" id="btnApple">Mapy (Apple)</button>
               <button class="btn" id="btnCopy">Kopírovat adresu</button>
               <button class="btn" id="btnCal">Přidat do kalendáře</button>
-              <button class="btn" id="btnQR">QR kód</button>
             </div>
           </div>
 
-          <div class="qrWrap" id="qrWrap">
-            <div class="qrBox">
-              <canvas id="qr" width="140" height="140"></canvas>
-              <div class="small">
-                QR kód vede na tuhle stránku.<br/>
-                Ideální na vytištění / vývěsku / leták.
-              </div>
-            </div>
+          <!-- Info panel -->
+          <div class="details" id="details">
+            <div><b>Kdy:</b> 23. 3. 2026 (pondělí) v 15:00</div>
+            <div><b>Kde:</b> KD Pub</div>
+            <div><b>Adresa:</b> Mariánské nám. 2187, 688 01 Uherský Brod 1</div>
           </div>
         </div>
       </section>
@@ -303,7 +291,7 @@
     const target = new Date(TARGET_ISO).getTime();
 
     // DÉLKA ÚVODU (ms)
-    const INTRO_MS = 3600;
+    const INTRO_MS = 3800;
 
     // ====== Welcome animace ======
     const welcome = document.getElementById("welcome");
@@ -363,7 +351,6 @@
 
     // ====== Odpočet + posledních 10s pulse + konfety při 0 ======
     const grid = document.getElementById("grid");
-    const sub  = document.getElementById("sub");
     let fired = false;
 
     function tick(){
@@ -387,7 +374,6 @@
       if (diff === 0 && !fired) {
         fired = true;
         grid.classList.remove("pulse");
-        sub.innerHTML = "Je to tady! 🍻 <b>Startujeme</b><br/><span style='color: rgba(255,255,255,.62)'>" + ADDRESS + "</span>";
         startConfetti(2200);
       }
     }
@@ -398,17 +384,15 @@
     const details = document.getElementById("details");
     const morePanel = document.getElementById("morePanel");
 
-    document.getElementById("btnInfo").addEventListener("click", ()=>{
-      clickSound();
-      details.classList.toggle("show");
-      // když otevřeš info, schovej "Více" panel aby to nepůsobilo chaoticky
-      if (details.classList.contains("show")) morePanel.classList.remove("show");
-    });
-
     document.getElementById("btnMore").addEventListener("click", ()=>{
       clickSound();
       morePanel.classList.toggle("show");
-      if (morePanel.classList.contains("show")) details.classList.remove("show");
+      if (!morePanel.classList.contains("show")) details.classList.remove("show");
+    });
+
+    document.getElementById("btnInfo").addEventListener("click", ()=>{
+      clickSound();
+      details.classList.toggle("show");
     });
 
     document.getElementById("btnMap").addEventListener("click", ()=>{
@@ -466,31 +450,6 @@ END:VEVENT
 END:VCALENDAR`;
       download("setkani-spoluzaku.ics", ics);
       showToast("Staženo: kalendář ✅");
-    });
-
-    // ====== QR ======
-    const qrWrap = document.getElementById("qrWrap");
-    const qrCanvas = document.getElementById("qr");
-    const btnQR = document.getElementById("btnQR");
-
-    function drawQRviaImage(url){
-      const ctx = qrCanvas.getContext("2d");
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        ctx.clearRect(0,0,qrCanvas.width, qrCanvas.height);
-        ctx.drawImage(img,0,0,qrCanvas.width, qrCanvas.height);
-      };
-      img.src = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=" + encodeURIComponent(url);
-    }
-
-    btnQR.addEventListener("click", ()=>{
-      clickSound();
-      qrWrap.classList.toggle("show");
-      if (qrWrap.classList.contains("show")) {
-        drawQRviaImage(location.href);
-        showToast("QR zobrazen ✅");
-      }
     });
 
     // ====== Konfety ======
