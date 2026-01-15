@@ -221,7 +221,7 @@
     .details.show{ display:block; animation: pop .35s ease; }
     @keyframes pop{ from{opacity:0; transform: translateY(8px);} to{opacity:1; transform:none;} }
 
-    /* panel "Více" tlačítka na celou šířku */
+    /* panel "Více" */
     .moreGrid{
       display:grid;
       gap:10px;
@@ -312,7 +312,7 @@
 
           <!-- Info -->
           <div class="details" id="details">
-            <div><b>Kdy:</b> 23. 3. 2026 (pondělí) v 15:00</div>
+            <div><b>Kdy:</b> 28. 3. 2026 (sobota) v 15:00</div>
             <div><b>Kde:</b> KD Pub</div>
             <div><b>Adresa:</b> Mariánské nám. 2187, 688 01 Uherský Brod 1</div>
           </div>
@@ -329,7 +329,9 @@
   const EVENT_TITLE = "Setkání spolužáků po 20 letech";
   const PLACE_NAME  = "KD Pub";
   const ADDRESS     = "Mariánské nám. 2187, 688 01 Uherský Brod 1";
-  const TARGET_ISO  = "2026-03-23T15:00:00+01:00"; // Europe/Prague
+
+  // ✅ ZMĚNĚNO NA 28. 3. 2026 15:00
+  const TARGET_ISO  = "2026-03-28T15:00:00+01:00"; // Europe/Prague
   const target = new Date(TARGET_ISO).getTime();
 
   // ====== Intro delší + fadeout ======
@@ -479,13 +481,13 @@ VERSION:2.0
 PRODID:-//SetkaniSpoluzaku//CZ//EN
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
-UID:setkani-spoluzaku-20let-20260323@local
+UID:setkani-spoluzaku-20let-20260328@local
 DTSTAMP:${dtStamp}
 DTSTART:${dtStartUtc}
 DTEND:${dtEndUtc}
 SUMMARY:${EVENT_TITLE}
 LOCATION:${PLACE_NAME}, ${ADDRESS}
-DESCRIPTION:${EVENT_TITLE}\\nKdy: 23. 3. 2026 v 15:00\\nKde: ${PLACE_NAME}\\nAdresa: ${ADDRESS}
+DESCRIPTION:${EVENT_TITLE}\\nKdy: 28. 3. 2026 v 15:00\\nKde: ${PLACE_NAME}\\nAdresa: ${ADDRESS}
 END:VEVENT
 END:VCALENDAR`;
     download("setkani-spoluzaku.ics", ics);
