@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Setkání spolužáků po 20 letech</title>
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg1:#070a12; --bg2:#0b1530; --card: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92); --muted: rgba(255,255,255,.70);
+      --stroke: rgba(255,255,255,.14);
+      --glow: 0 12px 50px rgba(64,130,255,.22);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 15%, #1a2c6a 0%, transparent 55%),
+                  radial-gradient(900px 600px at 85% 30%, #4a1f6b 0%, transparent 55%),
+                  linear-gradient(180deg, var(--bg2), var(--bg1));
+      overflow:hidden;
+    }
+
+    /* Animated noise + floating blobs */
+    .fx{position:fixed; inset:0; pointer-events:none;}
+    .fx::before{
+      content:"";
+      position:absolute; inset:-50%;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      transform:rotate(8deg);
+      opacity:.22;
+      mix-blend-mode:overlay;
+    }
+    .blob{
+      position:absolute; width:520px; height:520px; border-radius:50%;
+      filter: blur(50px);
+      opacity:.35;
+      animation: float 12s ease-in-out infinite;
+    }
+    .b1{left:-140px; top:10%; background:#2d6bff;}
+    .b2{right:-180px; top:22%; background:#b94cff; animation-duration:14s;}
+    .b3{left:20%; bottom:-220px; background:#00d3a7; animation-duration:16s;}
+    @keyframes float{
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(40px,-30px) scale(1.06)}
+    }
+
+    .wrap{position:relative; height:100%; display:grid; place-items:center; padding:24px;}
+    .card{
+      width:min(920px, 100%);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-radius:var(--radius);
+      box-shadow: var(--glow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow:hidden;
+      position:relative;
+    }
+    .inner{padding:28px;}
+    .title{font-size: clamp(26px, 3.4vw, 40px); letter-spacing:.2px; margin:0 0 8px;}
+    .subtitle{margin:0 0 18px; color:var(--muted); line-height:1.35; font-size: clamp(14px, 1.6vw, 16px);}
+
+    /* Welcome */
+    .welcome{display:grid; gap:16px; align-items:center; padding:48px 28px; text-align:center;}
+    .badge{
+      margin:0 auto; width:74px; height:74px; border-radius:20px;
+      border:1px solid var(--stroke); background: rgba(255,255,255,.08);
+      display:grid; place-items:center; box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      position:relative; overflow:hidden;
+    }
+    .badge::after{
+      content:""; position:absolute; inset:-60%;
+      background: conic-gradient(from 180deg, rgba(255,255,255,.0), rgba(255,255,255,.18), rgba(255,255,255,.0));
+      animation: spin 2.6s linear infinite;
+    }
+    .badge span{position:relative; font-weight:800; font-size:22px; letter-spacing:.5px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .reveal{
+      opacity:0; transform: translateY(18px) scale(.98); filter: blur(6px);
+      transition: opacity .9s ease, transform .9s ease, filter .9s ease;
+    }
+    .reveal.on{opacity:1; transform: translateY(0) scale(1); filter: blur(0);}
+
+    /* Countdown grid */
+    .grid{display:grid; gap:14px; grid-template-columns: repeat(4, minmax(0,1fr)); margin-top:18px;}
+    .unit{
+      padding:16px 14px; border-radius:18px; border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18); text-align:center;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .num{font-size: clamp(26px, 4.2vw, 44px); font-weight:800; letter-spacing:.5px; line-height:1.05;}
+    .lbl{margin-top:6px; color:var(--muted); font-size:13px; letter-spacing:.3px; text-transform: uppercase;}
+    @media (max-width:720px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+
+    .pulse .unit{
+      border-color: rgba(255,255,255,.28);
+      box-shadow: 0 14px 44px rgba(0,0,0,.28);
+      animation: beat .9s ease-in-out infinite;
+    }
+    @keyframes beat{
+      0%,100%{transform: translateY(0)}
+      50%{transform: translateY(-3px)}
+    }
+
+    /* Buttons */
+    .actions{display:flex; flex-wrap:wrap; gap:12px; margin-top:18px;}
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:16px;
+      font-weight:700;
+      letter-spacing:.2px;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
+      position:relative;
+      overflow:hidden;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.14);
+      border-color: rgba(255,255,255,.26);
+      box-shadow: 0 14px 40px rgba(0,0,0,.28);
+    }
+    .btn:active{transform: translateY(0px) scale(.98);}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(45,107,255,.55), rgba(185,76,255,.35));
+      border-color: rgba(255,255,255,.26);
+    }
+    .btn.primary:hover{background: linear-gradient(135deg, rgba(45,107,255,.68), rgba(185,76,255,.45));}
+
+    .details{
+      margin-top:16px; padding:14px 14px; border-radius:18px;
+      border:1px dashed rgba(255,255,255,.22);
+      background: rgba(0,0,0,.16);
+      color:var(--muted);
+      display:none;
+    }
+    .details.show{display:block; animation: pop .35s ease;}
+    @keyframes pop{from{opacity:0; transform: translateY(8px);} to{opacity:1; transform: translateY(0);} }
+
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      padding:10px 12px; border-radius:14px;
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.88);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index:9999;
+    }
+    .toast.on{opacity:1; transform:translateX(-50%) translateY(-2px);}
+
+    /* QR panel */
+    .qrWrap{margin-top:12px; display:none;}
+    .qrWrap.show{display:block; animation: pop .35s ease;}
+    .qrBox{
+      margin-top:10px;
+      padding:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+    }
+    canvas{border-radius:14px; background:#fff;}
+    .small{font-size:12px; color: rgba(255,255,255,.62); line-height:1.35;}
+
+    /* Confetti canvas */
+    #confetti{
+      position:absolute; inset:0; width:100%; height:100%;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .4s ease;
+    }
+    #confetti.on{opacity:1;}
+
+    .screen{display:none;}
+    .screen.on{display:block;}
+  </style>
+</head>
+<body>
+  <div class="fx">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="card">
+      <canvas id="confetti"></canvas>
+
+      <!-- WELCOME -->
+      <section id="welcome" class="screen on">
+        <div class="welcome">
+          <div class="badge"><span>20</span></div>
+          <div class="reveal" id="w1">
+            <h1 class="title">Setkání spolužáků po 20 letech</h1>
+            <p class="subtitle">Načítám odpočet… připrav se na nostalgii 😄</p>
+          </div>
+          <div class="reveal" id="w2" style="color: rgba(255,255,255,.72); font-size:14px;">
+            Start akce: <b>23. 3. 2026 v 15:00</b><br/>
+            <span style="color: rgba(255,255,255,.62)">Mariánské nám. 2187, 688 01 Uherský Brod 1 · KD Pub</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- MAIN -->
+      <section id="main" class="screen">
+        <div class="inner">
+          <h1 class="title">Setkání spolužáků po 20 letech</h1>
+          <p class="subtitle" id="sub">
+            Odpočet do startu: <b>23. 3. 2026 v 15:00</b> · <b>KD Pub</b><br/>
+            <span style="color: rgba(255,255,255,.62)">Mariánské nám. 2187, 688 01 Uherský Brod 1</span>
+          </p>
+
+          <div class="grid" id="grid" aria-label="Odpočet">
+            <div class="unit"><div class="num" id="d">0</div><div class="lbl">dní</div></div>
+            <div class="unit"><div class="num" id="h">00</div><div class="lbl">hodin</div></div>
+            <div class="unit"><div class="num" id="m">00</div><div class="lbl">minut</div></div>
+            <div class="unit"><div class="num" id="s">00</div><div class="lbl">sekund</div></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="btnInfo">Kdy a kde</button>
+            <button class="btn" id="btnMap">Mapy (Google)</button>
+            <button class="btn" id="btnApple">Mapy (Apple)</button>
+            <button class="btn" id="btnCopy">Kopírovat adresu</button>
+            <button class="btn" id="btnCal">Přidat do kalendáře</button>
+            <button class="btn" id="btnQR">QR kód</button>
+          </div>
+
+          <div class="details" id="details">
+            <div><b>Kdy:</b> 23. 3. 2026 (pondělí) v 15:00</div>
+            <div><b>Kde:</b> KD Pub</div>
+            <div><b>Adresa:</b> Mariánské nám. 2187, 688 01 Uherský Brod 1</div>
+            <div class="small" style="margin-top:8px;">Tip: Tenhle odkaz pošli do WhatsApp skupiny a připni ho.</div>
+          </div>
+
+          <div class="qrWrap" id="qrWrap">
+            <div class="qrBox">
+              <canvas id="qr" width="140" height="140"></canvas>
+              <div class="small">
+                QR kód vede na tuhle stránku.<br/>
+                Ideální na vytištění / vývěsku / leták.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Zkopírováno</div>
+
+  <script>
+    // ====== Nastavení ======
+    const EVENT_TITLE = "Setkání spolužáků po 20 letech";
+    const PLACE_NAME  = "KD Pub";
+    const ADDRESS     = "Mariánské nám. 2187, 688 01 Uherský Brod 1";
+    const TARGET_ISO  = "2026-03-23T15:00:00+01:00"; // Europe/Prague (CET)
+    const target = new Date(TARGET_ISO).getTime();
+
+    // ====== Welcome animace ======
+    const w1 = document.getElementById("w1");
+    const w2 = document.getElementById("w2");
+    setTimeout(()=>w1.classList.add("on"), 120);
+    setTimeout(()=>w2.classList.add("on"), 420);
+
+    setTimeout(()=>{
+      document.getElementById("welcome").style.display = "none";
+      document.getElementById("main").classList.add("on");
+      document.body.style.overflow = "auto";
+    }, 1500);
+
+    // ====== Jemný zvuk kliknutí (bez audio souboru) ======
+    let audioCtx;
+    function clickSound(){
+      try{
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = "triangle";
+        o.frequency.value = 520;
+        g.gain.value = 0.0001;
+        o.connect(g); g.connect(audioCtx.destination);
+        const t = audioCtx.currentTime;
+        g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
+        o.frequency.exponentialRampToValueAtTime(240, t + 0.06);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+        o.start(t);
+        o.stop(t + 0.09);
+      }catch(e){}
+    }
+
+    // ====== Toast ======
+    const toast = document.getElementById("toast");
+    let toastTimer;
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add("on");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toast.classList.remove("on"), 1100);
+    }
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+
+    // ====== Odpočet + posledních 10s pulse + konfety při 0 ======
+    const grid = document.getElementById("grid");
+    const sub  = document.getElementById("sub");
+    let fired = false;
+
+    function tick(){
+      const now = Date.now();
+      let diff = Math.max(0, target - now);
+
+      const sec = Math.floor(diff / 1000);
+      const days = Math.floor(sec / 86400);
+      const hours = Math.floor((sec % 86400) / 3600);
+      const mins = Math.floor((sec % 3600) / 60);
+      const secs = sec % 60;
+
+      document.getElementById("d").textContent = days;
+      document.getElementById("h").textContent = pad2(hours);
+      document.getElementById("m").textContent = pad2(mins);
+      document.getElementById("s").textContent = pad2(secs);
+
+      // pulse posledních 10s
+      if (sec <= 10 && sec > 0) grid.classList.add("pulse");
+      else grid.classList.remove("pulse");
+
+      if (diff === 0 && !fired) {
+        fired = true;
+        grid.classList.remove("pulse");
+        sub.innerHTML = "Je to tady! 🍻 <b>Startujeme</b>";
+        startConfetti(2200);
+      }
+    }
+    tick();
+    setInterval(tick, 250);
+
+    // ====== UI tlačítka ======
+    const details = document.getElementById("details");
+    document.getElementById("btnInfo").addEventListener("click", ()=>{
+      clickSound();
+      details.classList.toggle("show");
+    });
+
+    document.getElementById("btnMap").addEventListener("click", ()=>{
+      clickSound();
+      const q = encodeURIComponent(`${PLACE_NAME} ${ADDRESS}`);
+      window.open("https://www.google.com/maps/search/?api=1&query=" + q, "_blank");
+    });
+
+    document.getElementById("btnApple").addEventListener("click", ()=>{
+      clickSound();
+      // Apple Maps: používá URL schéma přes maps.apple.com
+      const q = encodeURIComponent(`${PLACE_NAME}, ${ADDRESS}`);
+      window.open("https://maps.apple.com/?q=" + q, "_blank");
+    });
+
+    document.getElementById("btnCopy").addEventListener("click", async ()=>{
+      clickSound();
+      try{
+        await navigator.clipboard.writeText(`${PLACE_NAME}, ${ADDRESS}`);
+        showToast("Adresa zkopírována ✅");
+      }catch{
+        showToast("Nejde kopírovat (prohlížeč) 😅");
+      }
+    });
+
+    // ICS (kalendář)
+    function download(filename, text) {
+      const el = document.createElement("a");
+      el.setAttribute("href", "data:text/calendar;charset=utf-8," + encodeURIComponent(text));
+      el.setAttribute("download", filename);
+      document.body.appendChild(el);
+      el.click();
+      el.remove();
+    }
+
+    document.getElementById("btnCal").addEventListener("click", ()=>{
+      clickSound();
+      // 15:00 CET = 14:00 UTC (březen 23 je už typicky CET->CEST? 2026-03-23 je před změnou na letní čas)
+      // Pro jistotu: vezmeme target a převedeme na UTC string do formátu iCal.
+      const dtStartUtc = new Date(target).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+      const dtEndUtc   = new Date(target + 3*60*60*1000).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z"; // +3h
+
+      const dtStamp = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+      const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SetkaniSpoluzaku//CZ//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:setkani-spoluzaku-20let-20260323@local
+DTSTAMP:${dtStamp}
+DTSTART:${dtStartUtc}
+DTEND:${dtEndUtc}
+SUMMARY:${EVENT_TITLE}
+LOCATION:${PLACE_NAME}, ${ADDRESS}
+DESCRIPTION:${EVENT_TITLE}\\nKdy: 23. 3. 2026 v 15:00\\nKde: ${PLACE_NAME}\\nAdresa: ${ADDRESS}
+END:VEVENT
+END:VCALENDAR`;
+      download("setkani-spoluzaku.ics", ics);
+      showToast("Staženo: kalendář ✅");
+    });
+
+    // ====== QR kód (mini implementace bez knihovny) ======
+    // Pozn.: Tohle je jednoduchý QR přes Google Chart API by byl nejlehčí, ale bez web requestů si to radši vygenerujeme “načerno”:
+    // -> použijeme ultra-minimal QR encoder? To je moc dlouhé.
+    // Prakticky: uděláme QR jako obrázek přes veřejný endpoint (funguje všude).
+    // Pokud chceš čistě offline bez externí služby, řekni a dám ti verzi s malou QR knihovnou v JS (větší kód).
+    const qrWrap = document.getElementById("qrWrap");
+    const qrCanvas = document.getElementById("qr");
+    const btnQR = document.getElementById("btnQR");
+
+    function drawQRviaImage(url){
+      const ctx = qrCanvas.getContext("2d");
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        ctx.clearRect(0,0,qrCanvas.width, qrCanvas.height);
+        ctx.drawImage(img,0,0,qrCanvas.width, qrCanvas.height);
+      };
+      // Google Chart API – jednoduché a spolehlivé pro statickou stránku
+      img.src = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=" + encodeURIComponent(url);
+    }
+
+    btnQR.addEventListener("click", ()=>{
+      clickSound();
+      qrWrap.classList.toggle("show");
+      if (qrWrap.classList.contains("show")) {
+        drawQRviaImage(location.href);
+        showToast("QR zobrazen ✅");
+      }
+    });
+
+    // ====== Konfety (canvas) ======
+    const confCanvas = document.getElementById("confetti");
+    const card = document.getElementById("card");
+    const cctx = confCanvas.getContext("2d");
+    let confettiParts = [];
+    let confettiAnim;
+
+    function resizeConfetti(){
+      const rect = card.getBoundingClientRect();
+      confCanvas.width  = Math.floor(rect.width * devicePixelRatio);
+      confCanvas.height = Math.floor(rect.height * devicePixelRatio);
+      confCanvas.style.width  = rect.width + "px";
+      confCanvas.style.height = rect.height + "px";
+      cctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    window.addEventListener("resize", resizeConfetti);
+    resizeConfetti();
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function startConfetti(ms=1800){
+      resizeConfetti();
+      confCanvas.classList.add("on");
+      confettiParts = Array.from({length: 150}, () => ({
+        x: rand(0, confCanvas.clientWidth),
+        y: rand(-40, -10),
+        vx: rand(-1.2, 1.2),
+        vy: rand(2.2, 4.6),
+        r: rand(3, 7),
+        rot: rand(0, Math.PI),
+        vr: rand(-0.18, 0.18),
+        a: rand(0.75, 1),
+        // bez explicitních barev? tady jsou “náhodné” – přirozeně vzniknou
+        hue: Math.floor(rand(0, 360))
+      }));
+
+      const t0 = performance.now();
+      cancelAnimationFrame(confettiAnim);
+
+      function frame(t){
+        const elapsed = t - t0;
+        cctx.clearRect(0,0,confCanvas.clientWidth, confCanvas.clientHeight);
+
+        for (const p of confettiParts){
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          p.vy *= 1.005;
+
+          cctx.save();
+          cctx.globalAlpha = p.a;
+          cctx.translate(p.x, p.y);
+          cctx.rotate(p.rot);
+          cctx.fillStyle = `hsl(${p.hue} 90% 60%)`;
+          cctx.fillRect(-p.r, -p.r, p.r*2.2, p.r*1.2);
+          cctx.restore();
+        }
+
+        if (elapsed < ms) confettiAnim = requestAnimationFrame(frame);
+        else {
+          confCanvas.classList.remove("on");
+          cctx.clearRect(0,0,confCanvas.clientWidth, confCanvas.clientHeight);
+        }
+      }
+      confettiAnim = requestAnimationFrame(frame);
+    }
+  </script>
+</body>
+</html>
