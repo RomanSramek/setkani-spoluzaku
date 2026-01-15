@@ -7,22 +7,29 @@
   <meta name="theme-color" content="#0b0f19" />
   <style>
     :root{
-      --bg1:#070a12; --bg2:#0b1530; --card: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92); --muted: rgba(255,255,255,.70);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
       --stroke: rgba(255,255,255,.14);
       --glow: 0 12px 50px rgba(64,130,255,.22);
       --radius: 22px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
+
+    /* POMALÉ MÍCHÁNÍ BAREV */
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
-      background: radial-gradient(1200px 700px at 20% 15%, #1a2c6a 0%, transparent 55%),
-                  radial-gradient(900px 600px at 85% 30%, #4a1f6b 0%, transparent 55%),
-                  linear-gradient(180deg, var(--bg2), var(--bg1));
+      background: linear-gradient(120deg, #0b1530, #1a2c6a, #4a1f6b, #00d3a7, #070a12);
+      background-size: 400% 400%;
+      animation: bgmix 22s ease-in-out infinite;
       overflow:hidden;
+    }
+    @keyframes bgmix{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
     }
 
     /* Animated noise + floating blobs */
@@ -32,18 +39,18 @@
       position:absolute; inset:-50%;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
       transform:rotate(8deg);
-      opacity:.22;
+      opacity:.18;
       mix-blend-mode:overlay;
     }
     .blob{
       position:absolute; width:520px; height:520px; border-radius:50%;
       filter: blur(50px);
-      opacity:.35;
-      animation: float 12s ease-in-out infinite;
+      opacity:.33;
+      animation: float 16s ease-in-out infinite;
     }
-    .b1{left:-140px; top:10%; background:#2d6bff;}
-    .b2{right:-180px; top:22%; background:#b94cff; animation-duration:14s;}
-    .b3{left:20%; bottom:-220px; background:#00d3a7; animation-duration:16s;}
+    .b1{left:-160px; top:8%; background:#2d6bff;}
+    .b2{right:-220px; top:20%; background:#b94cff; animation-duration:18s;}
+    .b3{left:20%; bottom:-250px; background:#00d3a7; animation-duration:20s;}
     @keyframes float{
       0%,100%{transform:translate(0,0) scale(1)}
       50%{transform:translate(40px,-30px) scale(1.06)}
@@ -63,10 +70,10 @@
     }
     .inner{padding:28px;}
     .title{font-size: clamp(26px, 3.4vw, 40px); letter-spacing:.2px; margin:0 0 8px;}
-    .subtitle{margin:0 0 18px; color:var(--muted); line-height:1.35; font-size: clamp(14px, 1.6vw, 16px);}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.35; font-size: clamp(14px, 1.6vw, 16px);}
 
     /* Welcome */
-    .welcome{display:grid; gap:16px; align-items:center; padding:48px 28px; text-align:center;}
+    .welcome{display:grid; gap:16px; align-items:center; padding:54px 28px; text-align:center;}
     .badge{
       margin:0 auto; width:74px; height:74px; border-radius:20px;
       border:1px solid var(--stroke); background: rgba(255,255,255,.08);
@@ -87,20 +94,39 @@
     }
     .reveal.on{opacity:1; transform: translateY(0) scale(1); filter: blur(0);}
 
-    /* Countdown grid */
-    .grid{display:grid; gap:14px; grid-template-columns: repeat(4, minmax(0,1fr)); margin-top:18px;}
-    .unit{
-      padding:16px 14px; border-radius:18px; border:1px solid var(--stroke);
-      background: rgba(0,0,0,.18); text-align:center;
-      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    /* ODPOČET – JEDEN ŘÁDEK */
+    .countline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
     }
-    .num{font-size: clamp(26px, 4.2vw, 44px); font-weight:800; letter-spacing:.5px; line-height:1.05;}
-    .lbl{margin-top:6px; color:var(--muted); font-size:13px; letter-spacing:.3px; text-transform: uppercase;}
-    @media (max-width:720px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    .pill{
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+    }
+    .pill .num{
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .pill .lbl{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
 
-    .pulse .unit{
+    /* posledních 10s pulse */
+    .pulse .pill{
       border-color: rgba(255,255,255,.28);
-      box-shadow: 0 14px 44px rgba(0,0,0,.28);
+      box-shadow: 0 14px 44px rgba(0,0,0,.20);
       animation: beat .9s ease-in-out infinite;
     }
     @keyframes beat{
@@ -109,7 +135,7 @@
     }
 
     /* Buttons */
-    .actions{display:flex; flex-wrap:wrap; gap:12px; margin-top:18px;}
+    .actions{display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;}
     .btn{
       cursor:pointer;
       border:1px solid rgba(255,255,255,.18);
@@ -120,8 +146,6 @@
       font-weight:700;
       letter-spacing:.2px;
       transition: transform .18s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
-      position:relative;
-      overflow:hidden;
       user-select:none;
     }
     .btn:hover{
@@ -138,7 +162,7 @@
     .btn.primary:hover{background: linear-gradient(135deg, rgba(45,107,255,.68), rgba(185,76,255,.45));}
 
     .details{
-      margin-top:16px; padding:14px 14px; border-radius:18px;
+      margin-top:14px; padding:14px 14px; border-radius:18px;
       border:1px dashed rgba(255,255,255,.22);
       background: rgba(0,0,0,.16);
       color:var(--muted);
@@ -221,24 +245,20 @@
         <div class="inner">
           <h1 class="title">Setkání spolužáků po 20 letech</h1>
           <p class="subtitle" id="sub">
-            Odpočet do startu: <b>23. 3. 2026 v 15:00</b> · <b>KD Pub</b><br/>
+            <b>23. 3. 2026 v 15:00</b> · <b>KD Pub</b><br/>
             <span style="color: rgba(255,255,255,.62)">Mariánské nám. 2187, 688 01 Uherský Brod 1</span>
           </p>
 
-          <div class="grid" id="grid" aria-label="Odpočet">
-            <div class="unit"><div class="num" id="d">0</div><div class="lbl">dní</div></div>
-            <div class="unit"><div class="num" id="h">00</div><div class="lbl">hodin</div></div>
-            <div class="unit"><div class="num" id="m">00</div><div class="lbl">minut</div></div>
-            <div class="unit"><div class="num" id="s">00</div><div class="lbl">sekund</div></div>
+          <div class="countline" id="grid" aria-label="Odpočet">
+            <div class="pill"><div class="num" id="d">0</div><div class="lbl">dní</div></div>
+            <div class="pill"><div class="num" id="h">00</div><div class="lbl">hod</div></div>
+            <div class="pill"><div class="num" id="m">00</div><div class="lbl">min</div></div>
+            <div class="pill"><div class="num" id="s">00</div><div class="lbl">sek</div></div>
           </div>
 
           <div class="actions">
             <button class="btn primary" id="btnInfo">Kdy a kde</button>
-            <button class="btn" id="btnMap">Mapy (Google)</button>
-            <button class="btn" id="btnApple">Mapy (Apple)</button>
-            <button class="btn" id="btnCopy">Kopírovat adresu</button>
-            <button class="btn" id="btnCal">Přidat do kalendáře</button>
-            <button class="btn" id="btnQR">QR kód</button>
+            <button class="btn" id="btnMore">Více</button>
           </div>
 
           <div class="details" id="details">
@@ -246,6 +266,16 @@
             <div><b>Kde:</b> KD Pub</div>
             <div><b>Adresa:</b> Mariánské nám. 2187, 688 01 Uherský Brod 1</div>
             <div class="small" style="margin-top:8px;">Tip: Tenhle odkaz pošli do WhatsApp skupiny a připni ho.</div>
+          </div>
+
+          <div class="details" id="morePanel">
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;">
+              <button class="btn" id="btnMap">Mapy (Google)</button>
+              <button class="btn" id="btnApple">Mapy (Apple)</button>
+              <button class="btn" id="btnCopy">Kopírovat adresu</button>
+              <button class="btn" id="btnCal">Přidat do kalendáře</button>
+              <button class="btn" id="btnQR">QR kód</button>
+            </div>
           </div>
 
           <div class="qrWrap" id="qrWrap">
@@ -272,19 +302,34 @@
     const TARGET_ISO  = "2026-03-23T15:00:00+01:00"; // Europe/Prague (CET)
     const target = new Date(TARGET_ISO).getTime();
 
+    // DÉLKA ÚVODU (ms)
+    const INTRO_MS = 3600;
+
     // ====== Welcome animace ======
+    const welcome = document.getElementById("welcome");
+    const main = document.getElementById("main");
     const w1 = document.getElementById("w1");
     const w2 = document.getElementById("w2");
+
     setTimeout(()=>w1.classList.add("on"), 120);
     setTimeout(()=>w2.classList.add("on"), 420);
 
+    // Delší intro + fadeout
     setTimeout(()=>{
-      document.getElementById("welcome").style.display = "none";
-      document.getElementById("main").classList.add("on");
-      document.body.style.overflow = "auto";
-    }, 1500);
+      welcome.style.transition = "opacity 900ms ease, transform 900ms ease, filter 900ms ease";
+      welcome.style.opacity = "0";
+      welcome.style.transform = "translateY(-6px) scale(0.99)";
+      welcome.style.filter = "blur(6px)";
 
-    // ====== Jemný zvuk kliknutí (bez audio souboru) ======
+      setTimeout(()=>{
+        welcome.style.display = "none";
+        main.classList.add("on");
+        document.body.style.overflow = "auto";
+      }, 920);
+
+    }, INTRO_MS);
+
+    // ====== Jemný zvuk kliknutí ======
     let audioCtx;
     function clickSound(){
       try{
@@ -336,25 +381,34 @@
       document.getElementById("m").textContent = pad2(mins);
       document.getElementById("s").textContent = pad2(secs);
 
-      // pulse posledních 10s
       if (sec <= 10 && sec > 0) grid.classList.add("pulse");
       else grid.classList.remove("pulse");
 
       if (diff === 0 && !fired) {
         fired = true;
         grid.classList.remove("pulse");
-        sub.innerHTML = "Je to tady! 🍻 <b>Startujeme</b>";
+        sub.innerHTML = "Je to tady! 🍻 <b>Startujeme</b><br/><span style='color: rgba(255,255,255,.62)'>" + ADDRESS + "</span>";
         startConfetti(2200);
       }
     }
     tick();
     setInterval(tick, 250);
 
-    // ====== UI tlačítka ======
+    // ====== UI ======
     const details = document.getElementById("details");
+    const morePanel = document.getElementById("morePanel");
+
     document.getElementById("btnInfo").addEventListener("click", ()=>{
       clickSound();
       details.classList.toggle("show");
+      // když otevřeš info, schovej "Více" panel aby to nepůsobilo chaoticky
+      if (details.classList.contains("show")) morePanel.classList.remove("show");
+    });
+
+    document.getElementById("btnMore").addEventListener("click", ()=>{
+      clickSound();
+      morePanel.classList.toggle("show");
+      if (morePanel.classList.contains("show")) details.classList.remove("show");
     });
 
     document.getElementById("btnMap").addEventListener("click", ()=>{
@@ -365,7 +419,6 @@
 
     document.getElementById("btnApple").addEventListener("click", ()=>{
       clickSound();
-      // Apple Maps: používá URL schéma přes maps.apple.com
       const q = encodeURIComponent(`${PLACE_NAME}, ${ADDRESS}`);
       window.open("https://maps.apple.com/?q=" + q, "_blank");
     });
@@ -392,12 +445,10 @@
 
     document.getElementById("btnCal").addEventListener("click", ()=>{
       clickSound();
-      // 15:00 CET = 14:00 UTC (březen 23 je už typicky CET->CEST? 2026-03-23 je před změnou na letní čas)
-      // Pro jistotu: vezmeme target a převedeme na UTC string do formátu iCal.
       const dtStartUtc = new Date(target).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
-      const dtEndUtc   = new Date(target + 3*60*60*1000).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z"; // +3h
-
+      const dtEndUtc   = new Date(target + 3*60*60*1000).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
       const dtStamp = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+
       const ics =
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -417,11 +468,7 @@ END:VCALENDAR`;
       showToast("Staženo: kalendář ✅");
     });
 
-    // ====== QR kód (mini implementace bez knihovny) ======
-    // Pozn.: Tohle je jednoduchý QR přes Google Chart API by byl nejlehčí, ale bez web requestů si to radši vygenerujeme “načerno”:
-    // -> použijeme ultra-minimal QR encoder? To je moc dlouhé.
-    // Prakticky: uděláme QR jako obrázek přes veřejný endpoint (funguje všude).
-    // Pokud chceš čistě offline bez externí služby, řekni a dám ti verzi s malou QR knihovnou v JS (větší kód).
+    // ====== QR ======
     const qrWrap = document.getElementById("qrWrap");
     const qrCanvas = document.getElementById("qr");
     const btnQR = document.getElementById("btnQR");
@@ -434,7 +481,6 @@ END:VCALENDAR`;
         ctx.clearRect(0,0,qrCanvas.width, qrCanvas.height);
         ctx.drawImage(img,0,0,qrCanvas.width, qrCanvas.height);
       };
-      // Google Chart API – jednoduché a spolehlivé pro statickou stránku
       img.src = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=" + encodeURIComponent(url);
     }
 
@@ -447,7 +493,7 @@ END:VCALENDAR`;
       }
     });
 
-    // ====== Konfety (canvas) ======
+    // ====== Konfety ======
     const confCanvas = document.getElementById("confetti");
     const card = document.getElementById("card");
     const cctx = confCanvas.getContext("2d");
@@ -479,7 +525,6 @@ END:VCALENDAR`;
         rot: rand(0, Math.PI),
         vr: rand(-0.18, 0.18),
         a: rand(0.75, 1),
-        // bez explicitních barev? tady jsou “náhodné” – přirozeně vzniknou
         hue: Math.floor(rand(0, 360))
       }));
 
