@@ -14,25 +14,17 @@
       --glow: 0 12px 50px rgba(64,130,255,.22);
       --radius: 22px;
     }
-
     *{ box-sizing:border-box }
     html,body{ height:100% }
 
-    /* ===== Pozadí – pomalé míchání barev ===== */
+    /* Pozadí – pomalé míchání barev */
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
-      background: linear-gradient(
-        120deg,
-        #0b1530,
-        #1a2c6a,
-        #4a1f6b,
-        #00d3a7,
-        #070a12
-      );
-      background-size:400% 400%;
-      animation:bgmix 22s ease-in-out infinite;
+      background: linear-gradient(120deg, #0b1530, #1a2c6a, #4a1f6b, #00d3a7, #070a12);
+      background-size: 400% 400%;
+      animation: bgmix 22s ease-in-out infinite;
       overflow:hidden;
     }
     @keyframes bgmix{
@@ -41,7 +33,7 @@
       100%{background-position:0% 50%}
     }
 
-    /* ===== Efekty pozadí ===== */
+    /* Efekty pozadí */
     .fx{ position:fixed; inset:0; pointer-events:none; }
     .fx::before{
       content:"";
@@ -67,7 +59,7 @@
       50%{ transform:translate(40px,-30px) scale(1.06) }
     }
 
-    /* ===== Layout ===== */
+    /* Layout */
     .wrap{
       position:relative;
       height:100%;
@@ -82,21 +74,23 @@
       border-radius:var(--radius);
       box-shadow:var(--glow);
       backdrop-filter:blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       overflow:hidden;
+      position:relative;
     }
     .inner{ padding:28px }
     .title{
       font-size:clamp(26px,3.4vw,40px);
       margin:0 0 6px;
-      text-align:left;
     }
 
-    /* ===== Intro ===== */
+    /* Intro */
     .welcome{
       text-align:center;
       padding:56px 28px;
       display:grid;
       gap:16px;
+      align-items:center;
     }
     .badge{
       width:74px; height:74px;
@@ -108,6 +102,7 @@
       place-items:center;
       position:relative;
       overflow:hidden;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
     }
     .badge::after{
       content:"";
@@ -123,7 +118,9 @@
     @keyframes spin{ to{ transform:rotate(360deg) } }
 
     .subtitle{
+      margin:0;
       color:var(--muted);
+      line-height:1.35;
       font-size:15px;
     }
 
@@ -131,7 +128,7 @@
       opacity:0;
       transform:translateY(18px) scale(.98);
       filter:blur(6px);
-      transition:.9s ease;
+      transition:opacity .9s ease, transform .9s ease, filter .9s ease;
     }
     .reveal.on{
       opacity:1;
@@ -139,7 +136,7 @@
       filter:none;
     }
 
-    /* ===== Odpočet ===== */
+    /* Odpočet na jednom řádku */
     .countline{
       display:flex;
       gap:10px;
@@ -155,20 +152,31 @@
       border:1px solid var(--stroke);
       background:rgba(0,0,0,.18);
     }
-    .pill .num{ font-size:26px; font-weight:800 }
+    .pill .num{ font-size:26px; font-weight:800; line-height:1 }
     .pill .lbl{
       font-size:12px;
       color:var(--muted);
       text-transform:uppercase;
       letter-spacing:.3px;
     }
+    .pulse .pill{
+      border-color: rgba(255,255,255,.28);
+      box-shadow: 0 14px 44px rgba(0,0,0,.20);
+      animation: beat .9s ease-in-out infinite;
+    }
+    @keyframes beat{
+      0%,100%{transform: translateY(0)}
+      50%{transform: translateY(-3px)}
+    }
 
-    /* ===== TLAČÍTKA – CENTROVÁNÍ ===== */
+    /* Tlačítka – text na střed */
     .actions{
       margin-top:18px;
       width:100%;
       display:flex;
       justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
     }
 
     .btn{
@@ -181,37 +189,71 @@
       font-weight:700;
       cursor:pointer;
 
-      /* 🔥 KLÍČOVÉ ŘÁDKY PRO ZAROVNÁNÍ 🔥 */
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
 
-      transition:.18s ease;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
+      user-select:none;
     }
     .btn:hover{
       background:rgba(255,255,255,.14);
       transform:translateY(-2px);
+      border-color: rgba(255,255,255,.26);
+      box-shadow: 0 14px 40px rgba(0,0,0,.28);
     }
+    .btn:active{transform: translateY(0) scale(.98);}
     .btn.primary{
       background:linear-gradient(135deg,rgba(45,107,255,.55),rgba(185,76,255,.35));
+      border-color: rgba(255,255,255,.26);
     }
 
-    /* Panel Více */
     .details{
       margin-top:14px;
       padding:14px;
       border-radius:18px;
       border:1px dashed rgba(255,255,255,.22);
       background:rgba(0,0,0,.16);
+      color: var(--muted);
       display:none;
     }
-    .details.show{ display:block }
+    .details.show{ display:block; animation: pop .35s ease; }
+    @keyframes pop{ from{opacity:0; transform: translateY(8px);} to{opacity:1; transform:none;} }
 
-    .details .btn{
-      width:100%;
-      margin-bottom:8px;
+    /* panel "Více" tlačítka na celou šířku */
+    .moreGrid{
+      display:grid;
+      gap:10px;
+      margin-top:6px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
+    .moreGrid .btn{ width:100%; min-width:0; }
+
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      padding:10px 12px; border-radius:14px;
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.88);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index:9999;
+    }
+    .toast.on{opacity:1; transform:translateX(-50%) translateY(-2px);}
+
+    /* Confetti canvas */
+    #confetti{
+      position:absolute; inset:0; width:100%; height:100%;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .4s ease;
+    }
+    #confetti.on{opacity:1;}
 
     .screen{ display:none }
     .screen.on{ display:block }
@@ -226,7 +268,8 @@
   </div>
 
   <div class="wrap">
-    <div class="card">
+    <div class="card" id="card">
+      <canvas id="confetti"></canvas>
 
       <!-- INTRO -->
       <section id="welcome" class="screen on">
@@ -234,7 +277,7 @@
           <div class="badge"><span>20</span></div>
           <div class="reveal" id="w1">
             <h1 class="title" style="text-align:center">Setkání spolužáků po 20 letech</h1>
-            <p class="subtitle">Načítám odpočet…</p>
+            <p class="subtitle">Načítám odpočet… připrav se na nostalgii 😄</p>
           </div>
         </div>
       </section>
@@ -244,28 +287,34 @@
         <div class="inner">
           <h1 class="title">Setkání spolužáků po 20 letech</h1>
 
-          <div class="countline" id="grid">
+          <div class="countline" id="grid" aria-label="Odpočet">
             <div class="pill"><div class="num" id="d">0</div><div class="lbl">dní</div></div>
             <div class="pill"><div class="num" id="h">00</div><div class="lbl">hod</div></div>
             <div class="pill"><div class="num" id="m">00</div><div class="lbl">min</div></div>
             <div class="pill"><div class="num" id="s">00</div><div class="lbl">sek</div></div>
           </div>
 
+          <!-- Hlavní UI: jen "Více" -->
           <div class="actions">
             <button class="btn primary" id="btnMore">Více</button>
           </div>
 
+          <!-- Panel "Více" -->
           <div class="details" id="morePanel">
-            <button class="btn" id="btnInfo">Kdy a kde</button>
-            <button class="btn">Mapy (Google)</button>
-            <button class="btn">Mapy (Apple)</button>
-            <button class="btn">Přidat do kalendáře</button>
+            <div class="moreGrid">
+              <button class="btn" id="btnInfo">Kdy a kde</button>
+              <button class="btn" id="btnMap">Mapy (Google)</button>
+              <button class="btn" id="btnApple">Mapy (Apple)</button>
+              <button class="btn" id="btnCopy">Kopírovat adresu</button>
+              <button class="btn" id="btnCal">Přidat do kalendáře</button>
+            </div>
           </div>
 
+          <!-- Info -->
           <div class="details" id="details">
-            <b>Kdy:</b> 23. 3. 2026 v 15:00<br>
-            <b>Kde:</b> KD Pub<br>
-            Mariánské nám. 2187, Uherský Brod
+            <div><b>Kdy:</b> 23. 3. 2026 (pondělí) v 15:00</div>
+            <div><b>Kde:</b> KD Pub</div>
+            <div><b>Adresa:</b> Mariánské nám. 2187, 688 01 Uherský Brod 1</div>
           </div>
         </div>
       </section>
@@ -273,37 +322,241 @@
     </div>
   </div>
 
-<script>
-  const target = new Date("2026-03-23T15:00:00+01:00").getTime();
+  <div class="toast" id="toast">Zkopírováno</div>
 
+<script>
+  // ====== Nastavení ======
+  const EVENT_TITLE = "Setkání spolužáků po 20 letech";
+  const PLACE_NAME  = "KD Pub";
+  const ADDRESS     = "Mariánské nám. 2187, 688 01 Uherský Brod 1";
+  const TARGET_ISO  = "2026-03-23T15:00:00+01:00"; // Europe/Prague
+  const target = new Date(TARGET_ISO).getTime();
+
+  // ====== Intro delší + fadeout ======
+  const INTRO_MS = 3800;
+  const welcome = document.getElementById("welcome");
+  const main = document.getElementById("main");
   const w1 = document.getElementById("w1");
+
   setTimeout(()=>w1.classList.add("on"), 200);
 
   setTimeout(()=>{
-    document.getElementById("welcome").style.display="none";
-    document.getElementById("main").classList.add("on");
-  }, 3800);
+    welcome.style.transition = "opacity 900ms ease, transform 900ms ease, filter 900ms ease";
+    welcome.style.opacity = "0";
+    welcome.style.transform = "translateY(-6px) scale(0.99)";
+    welcome.style.filter = "blur(6px)";
 
-  function pad(n){ return String(n).padStart(2,"0") }
+    setTimeout(()=>{
+      welcome.style.display="none";
+      main.classList.add("on");
+      document.body.style.overflow = "auto";
+    }, 920);
+  }, INTRO_MS);
 
-  function tick(){
-    const diff = Math.max(0, target - Date.now());
-    const s = Math.floor(diff/1000);
-    d.textContent = Math.floor(s/86400);
-    h.textContent = pad(Math.floor((s%86400)/3600));
-    m.textContent = pad(Math.floor((s%3600)/60));
-    sEl.textContent = pad(s%60);
+  // ====== Jemný klik zvuk ======
+  let audioCtx;
+  function clickSound(){
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "triangle";
+      o.frequency.value = 520;
+      g.gain.value = 0.0001;
+      o.connect(g); g.connect(audioCtx.destination);
+      const t = audioCtx.currentTime;
+      g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
+      o.frequency.exponentialRampToValueAtTime(240, t + 0.06);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      o.start(t);
+      o.stop(t + 0.09);
+    }catch(e){}
   }
 
-  const d=document.getElementById("d"),
-        h=document.getElementById("h"),
-        m=document.getElementById("m"),
-        sEl=document.getElementById("s");
+  // ====== Toast ======
+  const toast = document.getElementById("toast");
+  let toastTimer;
+  function showToast(text){
+    toast.textContent = text;
+    toast.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove("on"), 1100);
+  }
 
-  setInterval(tick,250); tick();
+  function pad2(n){ return String(n).padStart(2,"0"); }
 
-  btnMore.onclick=()=>morePanel.classList.toggle("show");
-  btnInfo.onclick=()=>details.classList.toggle("show");
+  // ====== Odpočet + pulse posledních 10s ======
+  const grid = document.getElementById("grid");
+  const dEl = document.getElementById("d");
+  const hEl = document.getElementById("h");
+  const mEl = document.getElementById("m");
+  const sEl = document.getElementById("s");
+  let fired = false;
+
+  function tick(){
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+
+    const sec = Math.floor(diff / 1000);
+    const days = Math.floor(sec / 86400);
+    const hours = Math.floor((sec % 86400) / 3600);
+    const mins = Math.floor((sec % 3600) / 60);
+    const secs = sec % 60;
+
+    dEl.textContent = days;
+    hEl.textContent = pad2(hours);
+    mEl.textContent = pad2(mins);
+    sEl.textContent = pad2(secs);
+
+    if (sec <= 10 && sec > 0) grid.classList.add("pulse");
+    else grid.classList.remove("pulse");
+
+    if (diff === 0 && !fired){
+      fired = true;
+      grid.classList.remove("pulse");
+      startConfetti(2200);
+    }
+  }
+  tick();
+  setInterval(tick, 250);
+
+  // ====== UI toggle ======
+  const morePanel = document.getElementById("morePanel");
+  const details = document.getElementById("details");
+
+  document.getElementById("btnMore").addEventListener("click", ()=>{
+    clickSound();
+    morePanel.classList.toggle("show");
+    if (!morePanel.classList.contains("show")) details.classList.remove("show");
+  });
+
+  document.getElementById("btnInfo").addEventListener("click", ()=>{
+    clickSound();
+    details.classList.toggle("show");
+  });
+
+  // ====== Mapy / Kopie / Kalendář ======
+  document.getElementById("btnMap").addEventListener("click", ()=>{
+    clickSound();
+    const q = encodeURIComponent(`${PLACE_NAME} ${ADDRESS}`);
+    window.open("https://www.google.com/maps/search/?api=1&query=" + q, "_blank");
+  });
+
+  document.getElementById("btnApple").addEventListener("click", ()=>{
+    clickSound();
+    const q = encodeURIComponent(`${PLACE_NAME}, ${ADDRESS}`);
+    window.open("https://maps.apple.com/?q=" + q, "_blank");
+  });
+
+  document.getElementById("btnCopy").addEventListener("click", async ()=>{
+    clickSound();
+    try{
+      await navigator.clipboard.writeText(`${PLACE_NAME}, ${ADDRESS}`);
+      showToast("Adresa zkopírována ✅");
+    }catch{
+      showToast("Nejde kopírovat (prohlížeč) 😅");
+    }
+  });
+
+  function download(filename, text) {
+    const el = document.createElement("a");
+    el.setAttribute("href", "data:text/calendar;charset=utf-8," + encodeURIComponent(text));
+    el.setAttribute("download", filename);
+    document.body.appendChild(el);
+    el.click();
+    el.remove();
+  }
+
+  document.getElementById("btnCal").addEventListener("click", ()=>{
+    clickSound();
+    const dtStartUtc = new Date(target).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+    const dtEndUtc   = new Date(target + 3*60*60*1000).toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+    const dtStamp = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+
+    const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SetkaniSpoluzaku//CZ//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:setkani-spoluzaku-20let-20260323@local
+DTSTAMP:${dtStamp}
+DTSTART:${dtStartUtc}
+DTEND:${dtEndUtc}
+SUMMARY:${EVENT_TITLE}
+LOCATION:${PLACE_NAME}, ${ADDRESS}
+DESCRIPTION:${EVENT_TITLE}\\nKdy: 23. 3. 2026 v 15:00\\nKde: ${PLACE_NAME}\\nAdresa: ${ADDRESS}
+END:VEVENT
+END:VCALENDAR`;
+    download("setkani-spoluzaku.ics", ics);
+    showToast("Staženo: kalendář ✅");
+  });
+
+  // ====== Konfety ======
+  const confCanvas = document.getElementById("confetti");
+  const card = document.getElementById("card");
+  const cctx = confCanvas.getContext("2d");
+  let confettiParts = [];
+  let confettiAnim;
+
+  function resizeConfetti(){
+    const rect = card.getBoundingClientRect();
+    confCanvas.width  = Math.floor(rect.width * devicePixelRatio);
+    confCanvas.height = Math.floor(rect.height * devicePixelRatio);
+    confCanvas.style.width  = rect.width + "px";
+    confCanvas.style.height = rect.height + "px";
+    cctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  window.addEventListener("resize", resizeConfetti);
+  resizeConfetti();
+
+  function rand(min,max){ return Math.random()*(max-min)+min; }
+
+  function startConfetti(ms=1800){
+    resizeConfetti();
+    confCanvas.classList.add("on");
+    confettiParts = Array.from({length: 140}, () => ({
+      x: rand(0, confCanvas.clientWidth),
+      y: rand(-40, -10),
+      vx: rand(-1.2, 1.2),
+      vy: rand(2.2, 4.6),
+      r: rand(3, 7),
+      rot: rand(0, Math.PI),
+      vr: rand(-0.18, 0.18),
+      a: rand(0.75, 1),
+      hue: Math.floor(rand(0, 360))
+    }));
+
+    const t0 = performance.now();
+    cancelAnimationFrame(confettiAnim);
+
+    function frame(t){
+      const elapsed = t - t0;
+      cctx.clearRect(0,0,confCanvas.clientWidth, confCanvas.clientHeight);
+
+      for (const p of confettiParts){
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.vy *= 1.005;
+
+        cctx.save();
+        cctx.globalAlpha = p.a;
+        cctx.translate(p.x, p.y);
+        cctx.rotate(p.rot);
+        cctx.fillStyle = `hsl(${p.hue} 90% 60%)`;
+        cctx.fillRect(-p.r, -p.r, p.r*2.2, p.r*1.2);
+        cctx.restore();
+      }
+
+      if (elapsed < ms) confettiAnim = requestAnimationFrame(frame);
+      else {
+        confCanvas.classList.remove("on");
+        cctx.clearRect(0,0,confCanvas.clientWidth, confCanvas.clientHeight);
+      }
+    }
+    confettiAnim = requestAnimationFrame(frame);
+  }
 </script>
 </body>
 </html>
